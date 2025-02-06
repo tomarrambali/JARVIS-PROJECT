@@ -5,11 +5,12 @@ import openai
 from config import apikey
 import datetime
 import random
-import pyttsx3  # Import pyttsx3 for text-to-speech
+
 import numpy as np
 
-chatStr = ""
 
+chatStr = ""
+# https://youtu.be/Z3ZAJoi4x6Q
 def chat(query):
     global chatStr
     print(chatStr)
@@ -24,10 +25,11 @@ def chat(query):
         frequency_penalty=0,
         presence_penalty=0
     )
-    # Wrap this inside of a try-catch block
+    # todo: Wrap this inside of a  try catch block
     say(response["choices"][0]["text"])
     chatStr += f"{response['choices'][0]['text']}\n"
     return response["choices"][0]["text"]
+
 
 def ai(prompt):
     openai.api_key = apikey
@@ -42,23 +44,23 @@ def ai(prompt):
         frequency_penalty=0,
         presence_penalty=0
     )
-    # Wrap this inside of a try-catch block
+    # todo: Wrap this inside of a  try catch block
+    # print(response["choices"][0]["text"])
     text += response["choices"][0]["text"]
     if not os.path.exists("Openai"):
         os.mkdir("Openai")
 
+    # with open(f"Openai/prompt- {random.randint(1, 2343434356)}", "w") as f:
     with open(f"Openai/{''.join(prompt.split('intelligence')[1:]).strip() }.txt", "w") as f:
         f.write(text)
 
 def say(text):
-    # Use pyttsx3 for text-to-speech on Windows
-    engine = pyttsx3.init()
-    engine.say(text)
-    engine.runAndWait()
+    os.system(f'say "{text}"')
 
 def takeCommand():
     r = sr.Recognizer()
     with sr.Microphone() as source:
+        # r.pause_threshold =  0.6
         audio = r.listen(source)
         try:
             print("Recognizing...")
@@ -74,39 +76,44 @@ if __name__ == '__main__':
     while True:
         print("Listening...")
         query = takeCommand()
-
-        # Open different sites based on the command
-        sites = [["youtube", "https://www.youtube.com"], ["wikipedia", "https://www.wikipedia.com"], ["google", "https://www.google.com"], ["video", "https://youtu.be/J7Oj4VdBxWQ?si=ZnrWVyx4SbdHfr6w"], ["music", "C:\\Users\\RAMBALI SINGH TOMAR\\Music\\Setho Ka Seth.mp3"] ]
+        # todo: Add more sites
+        sites = [["youtube", "https://www.youtube.com"], ["wikipedia", "https://www.wikipedia.com"], ["google", "https://www.google.com"],]
         for site in sites:
             if f"Open {site[0]}".lower() in query.lower():
                 say(f"Opening {site[0]} sir...")
                 webbrowser.open(site[1])
-
-        # Play music if the command is given
+        # todo: Add a feature to play a specific song
         if "open music" in query:
-            musicPath = "/path/to/music.mp3"
+            musicPath = "/Users/harry/Downloads/downfall-21371.mp3"
             os.system(f"open {musicPath}")
 
         elif "the time" in query:
+            musicPath = "/Users/harry/Downloads/downfall-21371.mp3"
             hour = datetime.datetime.now().strftime("%H")
             min = datetime.datetime.now().strftime("%M")
-            say(f"Sir, the time is {hour} hours and {min} minutes.")
+            say(f"Sir time is {hour} bajke {min} minutes")
 
-        elif "open facetime" in query.lower():
+        elif "open facetime".lower() in query.lower():
             os.system(f"open /System/Applications/FaceTime.app")
 
-        elif "open pass" in query.lower():
+        elif "open pass".lower() in query.lower():
             os.system(f"open /Applications/Passky.app")
 
-        elif "Using artificial intelligence" in query.lower():
+        elif "Using artificial intelligence".lower() in query.lower():
             ai(prompt=query)
 
-        elif "Jarvis Quit" in query.lower():
+        elif "Jarvis Quit".lower() in query.lower():
             exit()
 
-        elif "reset chat" in query.lower():
+        elif "reset chat".lower() in query.lower():
             chatStr = ""
 
         else:
             print("Chatting...")
             chat(query)
+
+
+
+
+
+        # say(query)
